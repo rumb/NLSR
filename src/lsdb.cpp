@@ -238,9 +238,9 @@ Lsdb::installNameLsa(NameLsa& nlsa)
       _LOG_DEBUG("Router Name" << nlsa.getOrigRouter());
       Adjacent adj = m_nlsr.getAdjacencyList().getAdjacent(nlsa.getOrigRouter());
       _LOG_DEBUG("Router Link Cost" << adj.getLinkCost());
-      _LOG_DEBUG("Old Expiration Time Point" << chkNameLsa.getExpirationTimePoint());
+      _LOG_DEBUG("Old Expiration Time Point" << chkNameLsa->getExpirationTimePoint());
       _LOG_DEBUG("New Expiration Time Point" << nlsa.getExpirationTimePoint());
-      ndn::time::system_clock::Duration diff = nlsa.getExpirationTimePoint() - chkNameLsa.getExpirationTimePoint();
+      ndn::time::system_clock::Duration diff = nlsa.getExpirationTimePoint() - chkNameLsa->getExpirationTimePoint();
       ndn::time::seconds diff_s = ndn::time::duration_cast<ndn::time::seconds>(diff);
       double cost = diff_s.count();
       _LOG_DEBUG("Duration (s)" << cost);
