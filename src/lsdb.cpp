@@ -213,15 +213,40 @@ Lsdb::installNameLsa(NameLsa& nlsa)
                                                    ndn::time::system_clock::now();
       timeToExpire = ndn::time::duration_cast<ndn::time::seconds>(duration);
     }
+
+    _LOG_DEBUG("First Change the Link Cost !!");
+    _LOG_DEBUG("Router Name" << nlsa.getOrigRouter());
+    Adjacent adj = m_nlsr.getAdjacencyList().getAdjacent(nlsa.getOrigRouter());
+    _LOG_DEBUG("Default Router Link Cost" << adj.getLinkCost());
+    _LOG_DEBUG("First Expiration Time Point" << nlsa.getExpirationTimePoint());
+    _LOG_DEBUG("Expiration Duration (s)" << timeToExpire);
+    adj.setLinkCost(1000000.0);
+    _LOG_DEBUG("New Router Link Cost" << adj.getLinkCost());
+
     nlsa.setExpiringEventId(scheduleNameLsaExpiration(nlsa.getKey(),
                                                       nlsa.getLsSeqNo(),
                                                       timeToExpire));
+
   }
   else {
     if (chkNameLsa->getLsSeqNo() < nlsa.getLsSeqNo()) {
       _LOG_DEBUG("Updated Name LSA. Updating LSDB");
       _LOG_DEBUG("Deleting Name Lsa");
       chkNameLsa->writeLog();
+
+      _LOG_DEBUG("Change the Link Cost !!");
+      _LOG_DEBUG("Router Name" << nlsa.getOrigRouter());
+      Adjacent adj = m_nlsr.getAdjacencyList().getAdjacent(nlsa.getOrigRouter());
+      _LOG_DEBUG("Router Link Cost" << adj.getLinkCost());
+      _LOG_DEBUG("Old Expiration Time Point" << chkNameLsa.getExpirationTimePoint());
+      _LOG_DEBUG("New Expiration Time Point" << nlsa.getExpirationTimePoint());
+      ndn::time::system_clock::Duration diff = nlsa.getExpirationTimePoint() - chkNameLsa.getExpirationTimePoint();
+      ndn::time::seconds diff_s = ndn::time::duration_cast<ndn::time::seconds>(diff);
+      double cost = diff_s.count();
+      _LOG_DEBUG("Duration (s)" << cost);
+      adj.setLinkCost(cost);
+      _LOG_DEBUG("New Router Link Cost" << adj.getLinkCost());
+
       chkNameLsa->setLsSeqNo(nlsa.getLsSeqNo());
       chkNameLsa->setExpirationTimePoint(nlsa.getExpirationTimePoint());
       chkNameLsa->getNpl().sort();
