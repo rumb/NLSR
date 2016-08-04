@@ -220,7 +220,9 @@ Lsdb::installNameLsa(NameLsa& nlsa)
     _LOG_DEBUG("Default Router Link Cost" << adj.getLinkCost());
     _LOG_DEBUG("First Expiration Time Point" << nlsa.getExpirationTimePoint());
     _LOG_DEBUG("Expiration Duration (s)" << timeToExpire);
-    adj.setLinkCost(1000000.0);
+
+    m_nlsr.getAdjacencyList().updateAdjacentLinkCost(nlsa.getOrigRouter(),1000000.0);
+    buildAndInstallOwnAdjLsa();
     _LOG_DEBUG("New Router Link Cost" << adj.getLinkCost());
 
     nlsa.setExpiringEventId(scheduleNameLsaExpiration(nlsa.getKey(),
@@ -244,7 +246,8 @@ Lsdb::installNameLsa(NameLsa& nlsa)
       ndn::time::seconds diff_s = ndn::time::duration_cast<ndn::time::seconds>(diff);
       double cost = diff_s.count();
       _LOG_DEBUG("Duration (s)" << cost);
-      adj.setLinkCost(cost);
+      m_nlsr.getAdjacencyList().updateAdjacentLinkCost(nlsa.getOrigRouter(),cost);
+      buildAndInstallOwnAdjLsa();
       _LOG_DEBUG("New Router Link Cost" << adj.getLinkCost());
 
       chkNameLsa->setLsSeqNo(nlsa.getLsSeqNo());
