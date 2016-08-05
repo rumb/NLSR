@@ -1,4 +1,6 @@
-#i NLSR導入
+#!/bin/bash
+
+# NLSR導入
 # for Ubuntu14.04
 
 # ゴミを消去
@@ -21,9 +23,11 @@ sudo apt-get -y install libpcap-dev
 sudo apt-get -y install liblog4cxx10-dev
 sudo apt-get -y install libprotobuf-dev protobuf-compiler
 sudo apt-get -y install libssl-dev
+
 # Wireshark
 sudo apt-get -y --force-yes install bison flex libgtk-3-dev  libqt4-dev  libpcap-dev
 sudo apt-get -y install liblua5.2-dev
+
 # NDN Packet Dissector for Wireshark
 sudo apt-get -y install libcap2-bin
 
