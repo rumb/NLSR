@@ -644,7 +644,7 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
       ndn::time::system_clock::Duration duration = alsa.getExpirationTimePoint() -
                                                    ndn::time::system_clock::now();
       timeToExpire = ndn::time::duration_cast<ndn::time::seconds>(duration);
-# Edit
+// Edit
       if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
         _LOG_DEBUG("First Get an Neighbor AdjLSA and set New Link Cost");
         _LOG_DEBUG("Router Name" << alsa.getOrigRouter());
@@ -660,7 +660,7 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
         // schedule Routing table calculaiton
         m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
       }
-# Edit end
+// Edit end
     }
 
     scheduleAdjLsaExpiration(alsa.getKey(),
@@ -683,7 +683,7 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
                                                      ndn::time::system_clock::now();
         timeToExpire = ndn::time::duration_cast<ndn::time::seconds>(duration);
 
-# Edit
+// Edit
         if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
           _LOG_DEBUG("Get an Neighbor AdjLSA and set New Link Cost");
           _LOG_DEBUG("Router Name" << alsa.getOrigRouter());
@@ -702,7 +702,7 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
           // schedule Routing table calculaiton
           m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
         }
-# Edit end
+// Edit end
       }
       cancelScheduleLsaExpiringEvent(chkAdjLsa->getExpiringEventId());
       chkAdjLsa->setExpiringEventId(scheduleAdjLsaExpiration(alsa.getKey(),
