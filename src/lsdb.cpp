@@ -697,7 +697,8 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
           _LOG_DEBUG("Duration [link cost] (s)" << cost);
           m_nlsr.getAdjacencyList().updateAdjacentLinkCost(nlsa.getOrigRouter(), cost);
           scheduleAdjLsaBuild();
-          _LOG_DEBUG("New Router Link Cost" << adj.getLinkCost());
+          Adjacent adj2 = m_nlsr.getAdjacencyList().getAdjacent(nlsa.getOrigRouter());
+          _LOG_DEBUG("New Router Link Cost" << adj2.getLinkCost());
           // schedule Routing table calculaiton
           m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
         }
