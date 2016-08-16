@@ -687,7 +687,7 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
         if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
           _LOG_DEBUG("Get an Neighbor AdjLSA and set New Link Cost");
           _LOG_DEBUG("Router Name" << alsa.getOrigRouter());
-          Adjacent adj1 = m_nlsr.getAdjacencyList().getAdjacent(nlsa.getOrigRouter());
+          Adjacent adj1 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
           _LOG_DEBUG("Router Link Cost" << adj1.getLinkCost());
           _LOG_DEBUG("Old Expiration Time Point" << chkAdjLsa->getExpirationTimePoint());
           _LOG_DEBUG("New Expiration Time Point" << alsa.getExpirationTimePoint());
