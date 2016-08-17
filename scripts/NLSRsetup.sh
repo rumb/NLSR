@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # NLSR導入
-# for Ubuntu14.04
+# for Ubuntu Desktop 14.04 and Ubuntu Server 14.04
 
 # ゴミを消去
 sudo apt-get remove -y libreoffice*

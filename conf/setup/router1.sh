@@ -17,19 +17,16 @@ iface lo inet loopback
 auto eth1
 iface eth1 inet static
 address 10.0.12.0
-network 10.0.12.0
 netmask 255.255.255.254
 
 auto eth2
 iface eth2 inet static
 address 10.0.13.0
-network 10.0.13.0
 netmask 255.255.255.254
 
 auto eth3
 iface eth3 inet static
 address 10.0.14.0
-network 10.0.14.0
 netmask 255.255.255.254
 
 EOS
@@ -42,6 +39,3 @@ ifup eth2
 
 ifdown eth3
 ifup eth3
-
-ifdown eth4
-ifup eth4

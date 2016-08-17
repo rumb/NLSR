@@ -15,7 +15,6 @@ auto eth0
 #iface eth0 inet dhcp
 iface eth0 inet static
 address 10.0.13.1
-network 10.0.13.0
 netmask 255.255.255.254
 
 EOS

@@ -670,19 +670,8 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
     if (chkAdjLsa->getLsSeqNo() < alsa.getLsSeqNo()) {
       _LOG_DEBUG("Updated Adj LSA. Updating LSDB");
       _LOG_DEBUG("Deleting Adj Lsa");
-      chkAdjLsa->writeLog();
-      chkAdjLsa->setLsSeqNo(alsa.getLsSeqNo());
-      chkAdjLsa->setExpirationTimePoint(alsa.getExpirationTimePoint());
-      if (!chkAdjLsa->isEqualContent(alsa)) {
-        chkAdjLsa->getAdl().reset();
-        chkAdjLsa->getAdl().addAdjacents(alsa.getAdl());
-        m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
-      }
-      if (alsa.getOrigRouter() != m_nlsr.getConfParameter().getRouterPrefix()) {
-        ndn::time::system_clock::Duration duration = alsa.getExpirationTimePoint() -
-                                                     ndn::time::system_clock::now();
-        timeToExpire = ndn::time::duration_cast<ndn::time::seconds>(duration);
 
+      if (alsa.getOrigRouter() != m_nlsr.getConfParameter().getRouterPrefix()) {
 // Edit
         if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
           _LOG_DEBUG("Get an Neighbor AdjLSA and set New Link Cost");
@@ -703,6 +692,19 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
           m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
         }
 // Edit end
+
+      chkAdjLsa->writeLog();
+      chkAdjLsa->setLsSeqNo(alsa.getLsSeqNo());
+      chkAdjLsa->setExpirationTimePoint(alsa.getExpirationTimePoint());
+      if (!chkAdjLsa->isEqualContent(alsa)) {
+        chkAdjLsa->getAdl().reset();
+        chkAdjLsa->getAdl().addAdjacents(alsa.getAdl());
+        m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
+      }
+      if (alsa.getOrigRouter() != m_nlsr.getConfParameter().getRouterPrefix()) {
+        ndn::time::system_clock::Duration duration = alsa.getExpirationTimePoint() -
+                                                     ndn::time::system_clock::now();
+        timeToExpire = ndn::time::duration_cast<ndn::time::seconds>(duration);
       }
       cancelScheduleLsaExpiringEvent(chkAdjLsa->getExpiringEventId());
       chkAdjLsa->setExpiringEventId(scheduleAdjLsaExpiration(alsa.getKey(),

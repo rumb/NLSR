@@ -17,7 +17,6 @@ iface lo inet loopback
 auto eth0
 iface eth0 inet static
 address 10.0.12.1
-network 10.0.12.0
 netmask 255.255.255.254
 
 EOS
