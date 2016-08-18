@@ -671,8 +671,8 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
       _LOG_DEBUG("Updated Adj LSA. Updating LSDB");
       _LOG_DEBUG("Deleting Adj Lsa");
 
-      if (alsa.getOrigRouter() != m_nlsr.getConfParameter().getRouterPrefix()) {
 // Edit
+      if (alsa.getOrigRouter() != m_nlsr.getConfParameter().getRouterPrefix()) {
         if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
           _LOG_DEBUG("Get an Neighbor AdjLSA and set New Link Cost");
           _LOG_DEBUG("Router Name" << alsa.getOrigRouter());
@@ -691,6 +691,7 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
           // schedule Routing table calculaiton
           m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
         }
+      }
 // Edit end
 
       chkAdjLsa->writeLog();
