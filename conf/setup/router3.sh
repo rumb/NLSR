@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# rRun as sudo
+# Run as sudo
 
 cat << EOS > /etc/network/interfaces
 # This file describes the network interfaces available on your system
@@ -12,7 +12,6 @@ iface lo inet loopback
 
 # The primary network interface
 auto eth0
-#iface eth0 inet dhcp
 iface eth0 inet static
 address 10.0.13.1
 netmask 255.255.255.254
@@ -21,3 +20,5 @@ EOS
 
 ifdown eth0
 ifup eth0
+
+ps aux | grep dhcp | grep -v grep | awk '{ print "kill -9", $2 }' | sh
