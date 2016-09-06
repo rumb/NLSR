@@ -18,5 +18,3 @@ EOS
 
 ifdown eth0
 ifup eth0
-
-ps aux | grep dhcp | grep -v grep | awk '{ print "kill -9", $2 }' | sh

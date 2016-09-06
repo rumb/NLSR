@@ -12,17 +12,17 @@ iface lo inet loopback
 
 # The primary network interface
 auto eth0
-iface eth1 inet static
+iface eth0 inet static
 address 10.0.12.0
 netmask 255.255.255.254
 
 auto eth1
-iface eth2 inet static
+iface eth1 inet static
 address 10.0.13.0
 netmask 255.255.255.254
 
 auto eth2
-iface eth3 inet static
+iface eth2 inet static
 address 10.0.14.0
 netmask 255.255.255.254
 
