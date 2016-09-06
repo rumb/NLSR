@@ -646,19 +646,23 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
       timeToExpire = ndn::time::duration_cast<ndn::time::seconds>(duration);
 // Edit
       if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
-        _LOG_DEBUG("First Get an Neighbor AdjLSA and set New Link Cost");
-        _LOG_DEBUG("Router Name" << alsa.getOrigRouter());
+        _LOG_DEBUG("<< First Get an Neighbor AdjLSA and set New Link Cost >>");
+        _LOG_DEBUG("Router Name : " << alsa.getOrigRouter());
+        _LOG_DEBUG("Expiration Time Point : " << alsa.getExpirationTimePoint());
         Adjacent adj1 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
-        _LOG_DEBUG("Default Router Link Cost" << adj1.getLinkCost());
-        _LOG_DEBUG("Expiration Time Point" << alsa.getExpirationTimePoint());
-        _LOG_DEBUG("Expiration Duration (s)" << timeToExpire);
-
-        m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), 1000000.0);
+        _LOG_DEBUG("Old Router Link Cost : " << adj1.getLinkCost());
+        ndn::time::system_clock::TimePoint adjLsaBuildTimePoint = alsa.getExpirationTimePoint()
+                                                                  - ndn::time::seconds(m_nlsr.getConfParameter().getRouterDeadInterval());
+        ndn::time::system_clock::Duration delay =  ndn::time::system_clock::now() - adjLsaBuildTimePoint;
+        _LOG_DEBUG("Transmission Delay : " << delay);
+        m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), delay);
         scheduleAdjLsaBuild();
         Adjacent adj2 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
         _LOG_DEBUG("New Router Link Cost" << adj2.getLinkCost());
         // schedule Routing table calculaiton
         m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
+
+        _LOG_DEBUG("(EXTRACT_MARKER),Router,"<< alsa.getOrigRouter() << ",Delay," << delay);
       }
 // Edit end
     }
@@ -674,22 +678,23 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
 // Edit
       if (alsa.getOrigRouter() != m_nlsr.getConfParameter().getRouterPrefix()) {
         if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
-          _LOG_DEBUG("Get an Neighbor AdjLSA and set New Link Cost");
+          _LOG_DEBUG("<< Get an Neighbor AdjLSA and set Link Cost >>");
           _LOG_DEBUG("Router Name : " << alsa.getOrigRouter());
+          _LOG_DEBUG("Expiration Time Point : " << alsa.getExpirationTimePoint());
           Adjacent adj1 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
-          _LOG_DEBUG("Router Link Cost : " << adj1.getLinkCost());
-          _LOG_DEBUG("Old Expiration Time Point : " << chkAdjLsa->getExpirationTimePoint());
-          _LOG_DEBUG("New Expiration Time Point : " << alsa.getExpirationTimePoint());
-          ndn::time::system_clock::Duration diff = alsa.getExpirationTimePoint() - chkAdjLsa->getExpirationTimePoint();
-          ndn::time::seconds diff_s = ndn::time::duration_cast<ndn::time::seconds>(diff);
-          double cost = diff_s.count();
-          _LOG_DEBUG("Duration [link cost] (s) : " << cost);
-          m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), cost);
+          _LOG_DEBUG("Old Router Link Cost : " << adj1.getLinkCost());
+          ndn::time::system_clock::TimePoint adjLsaBuildTimePoint = alsa.getExpirationTimePoint()
+                                                                    - ndn::time::seconds(m_nlsr.getConfParameter().getRouterDeadInterval());
+          ndn::time::system_clock::Duration delay =  ndn::time::system_clock::now() - adjLsaBuildTimePoint;
+          _LOG_DEBUG("Transmission Delay : " << delay);
+          m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), delay);
           scheduleAdjLsaBuild();
           Adjacent adj2 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
-          _LOG_DEBUG("New Router Link Cost : " << adj2.getLinkCost());
+          _LOG_DEBUG("New Router Link Cost" << adj2.getLinkCost());
           // schedule Routing table calculaiton
           m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
+
+          _LOG_DEBUG("(EXTRACT_MARKER),Router,"<< alsa.getOrigRouter() << ",Delay," << delay);
         }
       }
 // Edit end
