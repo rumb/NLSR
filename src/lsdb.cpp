@@ -654,8 +654,11 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
         ndn::time::system_clock::TimePoint adjLsaBuildTimePoint = alsa.getExpirationTimePoint()
                                                                   - ndn::time::seconds(m_nlsr.getConfParameter().getRouterDeadInterval());
         ndn::time::system_clock::Duration delay =  ndn::time::system_clock::now() - adjLsaBuildTimePoint;
+        ndn::time::seconds sdelay = ndn::time::duration_cast<ndn::time::seconds>(delay);
+        double cost = sdelay.count();
         _LOG_DEBUG("Transmission Delay : " << delay);
-        m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), delay);
+        _LOG_DEBUG("Transmission Delay (s) : " << sdelay);
+        m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), cost);
         scheduleAdjLsaBuild();
         Adjacent adj2 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
         _LOG_DEBUG("New Router Link Cost" << adj2.getLinkCost());
@@ -686,8 +689,11 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
           ndn::time::system_clock::TimePoint adjLsaBuildTimePoint = alsa.getExpirationTimePoint()
                                                                     - ndn::time::seconds(m_nlsr.getConfParameter().getRouterDeadInterval());
           ndn::time::system_clock::Duration delay =  ndn::time::system_clock::now() - adjLsaBuildTimePoint;
+          ndn::time::seconds sdelay = ndn::time::duration_cast<ndn::time::seconds>(delay);
+          double cost = sdelay.count();
           _LOG_DEBUG("Transmission Delay : " << delay);
-          m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), delay);
+          _LOG_DEBUG("Transmission Delay (s) : " << sdelay);
+          m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), cost);
           scheduleAdjLsaBuild();
           Adjacent adj2 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
           _LOG_DEBUG("New Router Link Cost" << adj2.getLinkCost());
