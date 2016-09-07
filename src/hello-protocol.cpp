@@ -40,7 +40,8 @@ HelloProtocol::calDelay(ndn::Name router)
   HelloHist* chkHelloHist = findHelloHist(router);
   if (chkHelloHist == 0) {
     _LOG_DEBUG("<< Add new HelloHist entry : " << router);
-    addHelloHist(HelloHist(router));
+    HelloHist hellohist(router);
+    addHelloHist(hellohist);
   }
   else{
     _LOG_DEBUG("(EXTRACT2_MARKER),Router,"<< router << ",Delay," << chkHelloHist->getDuration());
