@@ -180,7 +180,7 @@ HelloProtocol::onContentValidated(const ndn::shared_ptr<const ndn::Data>& data)
   _LOG_DEBUG("Data validation successful for INFO(name): " << dataName);
   if (dataName.get(-3).toUri() == INFO_COMPONENT) {
     ndn::Name neighbor = dataName.getPrefix(-4);
-
+    calDelay(neighbor);
     Adjacent::Status oldStatus = m_nlsr.getAdjacencyList().getStatusOfNeighbor(neighbor);
     m_nlsr.getAdjacencyList().setStatusOfNeighbor(neighbor, Adjacent::STATUS_ACTIVE);
     m_nlsr.getAdjacencyList().setTimedOutInterestCount(neighbor, 0);

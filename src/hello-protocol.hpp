@@ -29,6 +29,7 @@
 
 #include <utility>
 #include <ndn-cxx/util/time.hpp>
+#include "logger.hpp"
 
 namespace nlsr {
 
@@ -91,12 +92,38 @@ public:
     return 0;
   }
 
+  bool
+  addHelloHist(HelloHist& hellohist)
+  {
+    std::list<HelloHist>::iterator it = std::find_if(m_hellohist.begin(),
+                                                  m_hellohist.end(),
+                                                  bind(helloHistCompareByKey, _1,
+                                                       hellohist.getKey()));
+    if (it == m_hellohist.end()) {
+      m_hellohist.push_back(hellohist);
+      return true;
+    }
+    return false;
+  }
+
   static bool
   helloHistCompareByKey(const HelloHist& hellohist, const ndn::Name& key)
   {
     return hellohist.getKey() == key;
   }
 
+  void calDelay(ndn::Name router)
+  {
+    HelloHist* chkHelloHist = findHelloHist(router);
+    if (chkHelloHist == 0) {
+      _LOG_DEBUG("<< Add new HelloHist entry : " << router);
+      addHelloHist(HelloHist(router));
+    }
+    else{
+      _LOG_DEBUG("(EXTRACT2_MARKER),Router,"<< router << ",Delay," << chkHelloHist->getDuration());
+      chkHelloHist->updateTimePoint();
+    }
+  }
 
   void
   scheduleInterest(uint32_t seconds);
