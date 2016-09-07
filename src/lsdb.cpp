@@ -694,7 +694,7 @@ Lsdb::calDelayAndSetCost(AdjLsa& alsa, AdjLsa* chklsa)
       diff = 0;
     }
     else {
-      ndn::time::system_clock::Duration duration = alsa.getExpirationTimePoint() - chkAdjLsa->getExpirationTimePoint();
+      ndn::time::system_clock::Duration duration = alsa.getExpirationTimePoint() - chklsa->getExpirationTimePoint();
       diff = ndn::time::duration_cast<ndn::time::seconds>(duration).count();
     }
     // LSAの発行時刻と現在の時刻を比較して遅延を求める．
