@@ -644,32 +644,8 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
       ndn::time::system_clock::Duration duration = alsa.getExpirationTimePoint() -
                                                    ndn::time::system_clock::now();
       timeToExpire = ndn::time::duration_cast<ndn::time::seconds>(duration);
-// Edit
-      if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
-        _LOG_DEBUG("<< First Get an Neighbor AdjLSA and set New Link Cost >>");
-        _LOG_DEBUG("Router Name : " << alsa.getOrigRouter());
-        _LOG_DEBUG("Expiration Time Point : " << alsa.getExpirationTimePoint());
-        Adjacent adj1 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
-        _LOG_DEBUG("Old Router Link Cost : " << adj1.getLinkCost());
-        ndn::time::system_clock::TimePoint adjLsaBuildTimePoint = alsa.getExpirationTimePoint()
-                                                                  - ndn::time::seconds(m_nlsr.getConfParameter().getRouterDeadInterval());
-        ndn::time::system_clock::Duration delay =  ndn::time::system_clock::now() - adjLsaBuildTimePoint;
-        ndn::time::seconds sdelay = ndn::time::duration_cast<ndn::time::seconds>(delay);
-        double cost = sdelay.count() + 1.0;
-        _LOG_DEBUG("Transmission Delay : " << delay);
-        _LOG_DEBUG("Transmission Delay (s) : " << sdelay);
-        m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), cost);
-        scheduleAdjLsaBuild();
-        Adjacent adj2 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
-        _LOG_DEBUG("New Router Link Cost" << adj2.getLinkCost());
-        // schedule Routing table calculaiton
-        m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
-
-        _LOG_DEBUG("(EXTRACT_MARKER),Router,"<< alsa.getOrigRouter() << ",Delay," << delay);
-      }
-// Edit end
     }
-
+    calDelayAndSetCost(alsa,chkAdjLsa)
     scheduleAdjLsaExpiration(alsa.getKey(),
                              alsa.getLsSeqNo(), timeToExpire);
   }
@@ -677,35 +653,8 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
     if (chkAdjLsa->getLsSeqNo() < alsa.getLsSeqNo()) {
       _LOG_DEBUG("Updated Adj LSA. Updating LSDB");
       _LOG_DEBUG("Deleting Adj Lsa");
-
-// Edit
-      if (alsa.getOrigRouter() != m_nlsr.getConfParameter().getRouterPrefix()) {
-        if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
-          _LOG_DEBUG("<< Get an Neighbor AdjLSA and set Link Cost >>");
-          _LOG_DEBUG("Router Name : " << alsa.getOrigRouter());
-          _LOG_DEBUG("Expiration Time Point : " << alsa.getExpirationTimePoint());
-          Adjacent adj1 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
-          _LOG_DEBUG("Old Router Link Cost : " << adj1.getLinkCost());
-          ndn::time::system_clock::TimePoint adjLsaBuildTimePoint = alsa.getExpirationTimePoint()
-                                                                    - ndn::time::seconds(m_nlsr.getConfParameter().getRouterDeadInterval());
-          ndn::time::system_clock::Duration delay =  ndn::time::system_clock::now() - adjLsaBuildTimePoint;
-          ndn::time::seconds sdelay = ndn::time::duration_cast<ndn::time::seconds>(delay);
-          double cost = sdelay.count() + 1.0;
-          _LOG_DEBUG("Transmission Delay : " << delay);
-          _LOG_DEBUG("Transmission Delay (s) : " << sdelay);
-          m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), cost);
-          scheduleAdjLsaBuild();
-          Adjacent adj2 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
-          _LOG_DEBUG("New Router Link Cost" << adj2.getLinkCost());
-          // schedule Routing table calculaiton
-          m_nlsr.getRoutingTable().scheduleRoutingTableCalculation(m_nlsr);
-
-          _LOG_DEBUG("(EXTRACT_MARKER),Router,"<< alsa.getOrigRouter() << ",Delay," << delay);
-        }
-      }
-// Edit end
-
       chkAdjLsa->writeLog();
+      calDelayAndSetCost(alsa,chkAdjLsa)
       chkAdjLsa->setLsSeqNo(alsa.getLsSeqNo());
       chkAdjLsa->setExpirationTimePoint(alsa.getExpirationTimePoint());
       if (!chkAdjLsa->isEqualContent(alsa)) {
@@ -723,11 +672,50 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
                                                              alsa.getLsSeqNo(),
                                                              timeToExpire));
       _LOG_DEBUG("Adding Adj Lsa");
+
       chkAdjLsa->writeLog();
     }
   }
   return true;
 }
+
+// Edit
+void
+Lsdb::calDelayAndSetCost(AdjLsa& alsa, AdjLsa* chklsa)
+{
+  if (alsa.getOrigRouter() != m_nlsr.getConfParameter().getRouterPrefix())
+  {
+    _LOG_DEBUG("<< Get an Neighbor AdjLSA and set Link Cost >>");
+    _LOG_DEBUG("Router Name : " << alsa.getOrigRouter());
+    _LOG_DEBUG("Expiration Time Point : " << alsa.getExpirationTimePoint());
+    // 前回のLSAと比較して遅延を求める．
+    double diff = 0.0;
+    if ( chklsa == 0 ){
+      diff = 0;
+    }
+    else {
+      ndn::time::system_clock::Duration duration = alsa.getExpirationTimePoint() - chkAdjLsa->getExpirationTimePoint();
+      diff = ndn::time::duration_cast<ndn::time::seconds>(duration).count();
+    }
+    // LSAの発行時刻と現在の時刻を比較して遅延を求める．
+    ndn::time::system_clock::TimePoint adjLsaBuildTimePoint = alsa.getExpirationTimePoint()
+                                                              - ndn::time::seconds(m_nlsr.getConfParameter().getRouterDeadInterval());
+    ndn::time::system_clock::Duration _delay = ndn::time::system_clock::now() - adjLsaBuildTimePoint;
+    ndn::time::seconds delay = ndn::time::duration_cast<ndn::time::seconds>(_delay);
+    _LOG_DEBUG("(EXTRACT_MARKER),Router,"<< alsa.getOrigRouter() << ",Delay," << delay << ",Diff," << diff);
+
+    if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
+      Adjacent adj1 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
+      _LOG_DEBUG("Old Router Link Cost : " << adj1.getLinkCost());
+      double cost = delay.count() + 1.0;
+      m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), cost);
+      Adjacent adj2 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
+      _LOG_DEBUG("New Router Link Cost" << adj2.getLinkCost());
+      scheduleAdjLsaBuild();
+    }
+  }
+}
+// Edit end
 
 bool
 Lsdb::buildAndInstallOwnAdjLsa()

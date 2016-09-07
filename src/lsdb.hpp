@@ -107,6 +107,11 @@ public:
   bool
   installAdjLsa(AdjLsa& alsa);
 
+# Edit
+  void
+  calDelayAndSetCost(AdjLsa& alsa, AdjLsa* chklsa=0):
+# Edit end
+
   AdjLsa*
   findAdjLsa(const ndn::Name& key);
 
