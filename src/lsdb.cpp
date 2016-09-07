@@ -701,7 +701,7 @@ Lsdb::calDelayAndSetCost(AdjLsa& alsa, AdjLsa* chklsa)
     ndn::time::system_clock::TimePoint adjLsaBuildTimePoint = alsa.getExpirationTimePoint()
                                                               - ndn::time::seconds(m_nlsr.getConfParameter().getRouterDeadInterval());
     ndn::time::system_clock::Duration _delay = ndn::time::system_clock::now() - adjLsaBuildTimePoint;
-    ndn::time::seconds delay = ndn::time::duration_cast<ndn::time::milliseconds>(_delay);
+    ndn::time::milliseconds delay = ndn::time::duration_cast<ndn::time::milliseconds>(_delay);
     _LOG_DEBUG("(EXTRACT_MARKER),Router,"<< alsa.getOrigRouter() << ",Delay," << delay << ",Diff," << diff);
 
     if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
