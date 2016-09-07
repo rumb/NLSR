@@ -75,7 +75,7 @@ public:
   private:
     ndn::Name m_origRouter;
     ndn::time::system_clock::TimePoint m_latestHelloTimePoint;
-  }
+  };
 
   std::list<HelloHist> m_hellohist;
 
