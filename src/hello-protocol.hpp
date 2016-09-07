@@ -27,9 +27,46 @@
 #include <ndn-cxx/management/nfd-control-parameters.hpp>
 #include <ndn-cxx/util/scheduler.hpp>
 
+#include <utility>
+#include <ndn-cxx/util/time.hpp>
+
 namespace nlsr {
 
 class Nlsr;
+
+class HelloHist
+{
+public:
+  HelloHist(ndn::Name router)
+  : m_origRouter(router)
+  , m_latestHelloTimePoint(ndn::time::system_clock::now())
+  {
+  }
+
+  const ndn::Name
+  getKey() const
+  {
+    ndn::Name key = m_origRouter;
+    return key;
+  }
+
+  void
+  updateTimePoint()
+  {
+    m_TimePoint = ndn::time::system_clock::now();
+  }
+
+  ndn::time::system_clock::Duration;
+  getDuration()
+  {
+    ndn::time::system_clock::Duration duration = ndn::time::system_clock::now() - m_latestHelloTimePoint;
+    return duration;
+  }
+
+private:
+  ndn::Name m_origRouter;
+  ndn::time::system_clock::TimePoint m_latestHelloTimePoint;
+};
 
 class HelloProtocol
 {
@@ -39,6 +76,27 @@ public:
     , m_scheduler(scheduler)
   {
   }
+
+  std::list<HelloHist> m_hellohist;
+
+  HelloHist*
+  findHelloHist(const ndn::Name& key)
+  {
+    std::list<HelloHist>::iterator it = std::find_if(m_hellohist.begin(),
+                                                   m_hellohist.end(),
+                                                   bind(helloHistCompareByKey, _1, key));
+    if (it != m_nameLsdb.end()) {
+      return &(*it);
+    }
+    return 0;
+  }
+
+  static bool
+  helloHistCompareByKey(const HelloHist& hellohist, const ndn::Name& key)
+  {
+    return hellohist.getKey() == key;
+  }
+
 
   void
   scheduleInterest(uint32_t seconds);
