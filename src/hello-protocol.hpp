@@ -29,7 +29,6 @@
 
 #include <utility>
 #include <ndn-cxx/util/time.hpp>
-#include "logger.hpp"
 
 namespace nlsr {
 
@@ -112,18 +111,7 @@ public:
     return hellohist.getKey() == key;
   }
 
-  void calDelay(ndn::Name router)
-  {
-    HelloHist* chkHelloHist = findHelloHist(router);
-    if (chkHelloHist == 0) {
-      _LOG_DEBUG("<< Add new HelloHist entry : " << router);
-      addHelloHist(HelloHist(router));
-    }
-    else{
-      _LOG_DEBUG("(EXTRACT2_MARKER),Router,"<< router << ",Delay," << chkHelloHist->getDuration());
-      chkHelloHist->updateTimePoint();
-    }
-  }
+  void calDelay(ndn::Name router);
 
   void
   scheduleInterest(uint32_t seconds);
