@@ -54,10 +54,10 @@ public:
   void
   updateTimePoint()
   {
-    m_TimePoint = ndn::time::system_clock::now();
+    m_latestHelloTimePoint = ndn::time::system_clock::now();
   }
 
-  ndn::time::system_clock::Duration;
+  ndn::time::system_clock::Duration
   getDuration()
   {
     ndn::time::system_clock::Duration duration = ndn::time::system_clock::now() - m_latestHelloTimePoint;
@@ -86,7 +86,7 @@ public:
     std::list<HelloHist>::iterator it = std::find_if(m_hellohist.begin(),
                                                    m_hellohist.end(),
                                                    bind(helloHistCompareByKey, _1, key));
-    if (it != m_nameLsdb.end()) {
+    if (it != m_hellohist.end()) {
       return &(*it);
     }
     return 0;

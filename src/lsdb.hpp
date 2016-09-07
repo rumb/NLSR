@@ -109,7 +109,7 @@ public:
 
 // Edit
   void
-  calDelayAndSetCost(AdjLsa& alsa, AdjLsa* chklsa=0):
+  calDelayAndSetCost(AdjLsa& alsa, AdjLsa* chklsa = 0);
 // Edit end
 
   AdjLsa*
