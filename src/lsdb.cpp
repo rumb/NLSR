@@ -645,7 +645,7 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
                                                    ndn::time::system_clock::now();
       timeToExpire = ndn::time::duration_cast<ndn::time::seconds>(duration);
     }
-    calDelayAndSetCost(alsa,chkAdjLsa)
+    calDelayAndSetCost(alsa,chkAdjLsa);
     scheduleAdjLsaExpiration(alsa.getKey(),
                              alsa.getLsSeqNo(), timeToExpire);
   }
@@ -654,7 +654,7 @@ Lsdb::installAdjLsa(AdjLsa& alsa)
       _LOG_DEBUG("Updated Adj LSA. Updating LSDB");
       _LOG_DEBUG("Deleting Adj Lsa");
       chkAdjLsa->writeLog();
-      calDelayAndSetCost(alsa,chkAdjLsa)
+      calDelayAndSetCost(alsa,chkAdjLsa);
       chkAdjLsa->setLsSeqNo(alsa.getLsSeqNo());
       chkAdjLsa->setExpirationTimePoint(alsa.getExpirationTimePoint());
       if (!chkAdjLsa->isEqualContent(alsa)) {
