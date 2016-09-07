@@ -695,13 +695,13 @@ Lsdb::calDelayAndSetCost(AdjLsa& alsa, AdjLsa* chklsa)
     }
     else {
       ndn::time::system_clock::Duration duration = alsa.getExpirationTimePoint() - chklsa->getExpirationTimePoint();
-      diff = ndn::time::duration_cast<ndn::time::seconds>(duration).count();
+      diff = ndn::time::duration_cast<ndn::time::milliseconds>(duration).count();
     }
     // LSAの発行時刻と現在の時刻を比較して遅延を求める．
     ndn::time::system_clock::TimePoint adjLsaBuildTimePoint = alsa.getExpirationTimePoint()
                                                               - ndn::time::seconds(m_nlsr.getConfParameter().getRouterDeadInterval());
     ndn::time::system_clock::Duration _delay = ndn::time::system_clock::now() - adjLsaBuildTimePoint;
-    ndn::time::seconds delay = ndn::time::duration_cast<ndn::time::seconds>(_delay);
+    ndn::time::seconds delay = ndn::time::duration_cast<ndn::time::milliseconds>(_delay);
     _LOG_DEBUG("(EXTRACT_MARKER),Router,"<< alsa.getOrigRouter() << ",Delay," << delay << ",Diff," << diff);
 
     if (m_nlsr.getAdjacencyList().isNeighbor(alsa.getOrigRouter())) {
