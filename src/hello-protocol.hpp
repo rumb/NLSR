@@ -34,40 +34,6 @@ namespace nlsr {
 
 class Nlsr;
 
-class HelloHist
-{
-public:
-  HelloHist(ndn::Name router)
-  : m_origRouter(router)
-  , m_latestHelloTimePoint(ndn::time::system_clock::now())
-  {
-  }
-
-  const ndn::Name
-  getKey() const
-  {
-    ndn::Name key = m_origRouter;
-    return key;
-  }
-
-  void
-  updateTimePoint()
-  {
-    m_latestHelloTimePoint = ndn::time::system_clock::now();
-  }
-
-  ndn::time::system_clock::Duration
-  getDuration()
-  {
-    ndn::time::system_clock::Duration duration = ndn::time::system_clock::now() - m_latestHelloTimePoint;
-    return duration;
-  }
-
-private:
-  ndn::Name m_origRouter;
-  ndn::time::system_clock::TimePoint m_latestHelloTimePoint;
-};
-
 class HelloProtocol
 {
 public:
@@ -76,6 +42,40 @@ public:
     , m_scheduler(scheduler)
   {
   }
+
+  class HelloHist
+  {
+  public:
+    HelloHist(ndn::Name router)
+            : m_origRouter(router)
+            , m_latestHelloTimePoint(ndn::time::system_clock::now())
+    {
+    }
+
+    const ndn::Name
+    getKey() const
+    {
+      ndn::Name key = m_origRouter;
+      return key;
+    }
+
+    void
+    updateTimePoint()
+    {
+      m_latestHelloTimePoint = ndn::time::system_clock::now();
+    }
+
+    ndn::time::system_clock::Duration
+    getDuration()
+    {
+      ndn::time::system_clock::Duration duration = ndn::time::system_clock::now() - m_latestHelloTimePoint;
+      return duration;
+    }
+
+  private:
+    ndn::Name m_origRouter;
+    ndn::time::system_clock::TimePoint m_latestHelloTimePoint;
+  };
 
   std::list<HelloHist> m_hellohist;
 
