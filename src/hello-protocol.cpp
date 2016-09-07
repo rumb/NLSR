@@ -34,7 +34,8 @@ const std::string HelloProtocol::INFO_COMPONENT = "INFO";
 const std::string HelloProtocol::NLSR_COMPONENT = "NLSR";
 
 // Edit
-void calDelay(ndn::Name router)
+void
+HelloProtocol::calDelay(ndn::Name router)
 {
   HelloHist* chkHelloHist = findHelloHist(router);
   if (chkHelloHist == 0) {
