@@ -710,7 +710,7 @@ Lsdb::calDelayAndSetCost(AdjLsa& alsa, AdjLsa* chklsa)
       double cost = delay.count() + 1.0;
       m_nlsr.getAdjacencyList().updateAdjacentLinkCost(alsa.getOrigRouter(), cost);
       Adjacent adj2 = m_nlsr.getAdjacencyList().getAdjacent(alsa.getOrigRouter());
-      _LOG_DEBUG("New Router Link Cost" << adj2.getLinkCost());
+      _LOG_DEBUG("New Router Link Cost : " << adj2.getLinkCost());
       scheduleAdjLsaBuild();
     }
   }

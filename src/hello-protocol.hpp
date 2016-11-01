@@ -68,7 +68,8 @@ public:
     ndn::time::system_clock::Duration
     getDuration()
     {
-      ndn::time::system_clock::Duration duration = ndn::time::system_clock::now() - m_latestHelloTimePoint;
+      ndn::time::system_clock::Duration _duration = ndn::time::system_clock::now() - m_latestHelloTimePoint;
+      ndn::time::milliseconds duration = ndn::time::duration_cast<ndn::time::milliseconds>(_duration);
       return duration;
     }
 

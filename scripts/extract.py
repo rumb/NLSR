@@ -6,7 +6,7 @@ from StringIO import StringIO
 from matplotlib import pyplot
 from matplotlib.font_manager import FontProperties
 
-MARKER = '(EXTRACT_MARKER)'
+MARKER = '(EXTRACT2_MARKER)'
 DELIMITER = ','
 
 def extract_lines(filename):
@@ -30,7 +30,7 @@ def generate_csv(lines):
 def get_router(ary):
     ix = ary.index("Router")
     router =  ary[ix+1]
-    return router
+    return router.split('/')[-1]
 
 def get_time(ary):
     t = ary[0][:ary[0].index(" ")]
@@ -47,7 +47,8 @@ def plot(csv,filename=None):
     df = pandas.read_csv(StringIO(csv))
     routers = list(df["router"].drop_duplicates())
 
-    pyplot.title("DataMule")
+    pyplot.title("DM")
+    pyplot.xlim([20160908053400000,20160908054600000])
     pyplot.xlabel("time (Unix time)")
     pyplot.ylabel("delay (s)")
     for router in routers:
@@ -55,8 +56,10 @@ def plot(csv,filename=None):
         pyplot.plot(list(_df["time"]),_df["delay"],'o',label=router)
 
     fp = FontProperties(size=10)
-    #loc='lower right'で、右下に凡例を表示
-    pyplot.legend(prop=fp, bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0)
+    #loc='lower right'で、右下に凡例を表示0
+
+    pyplot.legend(prop=fp, loc='upper center', ncol=3,bbox_to_anchor=(0.5, -0.2), borderaxespad=0)
+    pyplot.tight_layout(pad=7)
     pyplot.grid(which="both")
     pyplot.show()
     #pyplot.savefig(filename)
